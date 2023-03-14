@@ -31,7 +31,7 @@ export default defineConfig(async () => ({
     rollupOptions: {
       input: {
         main: resolve(__dirname, 'index.html'),
-        createnew: resolve(__dirname, 'addindex.html'),
+        //createnew: resolve(__dirname, 'addindex.html'),
       }
     }
   },

@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { invoke } from "@tauri-apps/api/tauri";
 import { WebviewWindow } from '@tauri-apps/api/window'
+import { BaseDirectory,writeTextFile,exists, createDir, readTextFile} from '@tauri-apps/api/fs';
+import { appDataDir } from '@tauri-apps/api/path';
 import "./App.css";
 
 //FONT AWESOME AND REACT BOOTSTRAP
@@ -13,17 +15,36 @@ import { faRotateLeft, faAdd } from "@fortawesome/free-solid-svg-icons";
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-
 function App() {
   const [isCreate, setCreate] = useState(false);
+  const [data,setData] = useState("");
+
+  async function Create(){
+    const saveFileLoc = "save.json";
+    let dir = await exists("",{ dir: BaseDirectory.AppData});
+    setData(dir ? "TRUE" : "FALSE");
+    if(!dir) await createDir("",{ dir: BaseDirectory.AppData})
+
+
+    let json = await exists(saveFileLoc,{ dir: BaseDirectory.AppData});
+    if(!json) {
+      await writeTextFile(saveFileLoc, '',{ dir: BaseDirectory.AppData});
+    }
+    else{
+      let data = await readTextFile(saveFileLoc,{ dir: BaseDirectory.AppData});
+    }
+  }
+
+  Create();
 
   return (
     <div className="root">
       {isCreate ? <CreateNew onClickFunc={(value:string) => {
-        console.log("Created Called Stuff");
+        console.log("Creating {"+value+"}");
         if(value != "") {
-
+          
         }
+        Create();
         setCreate(false);
       }}/> : ""}
       <div className="TopBar" style={{width: '100%', height: '42px',display: 'flex' , backgroundColor: 'var(--foreground)', borderBottom: '0px solid var(--border)'}}>
@@ -46,7 +67,7 @@ function App() {
         </thead>
         <tbody>
           <tr>
-            <td>Name</td>
+            <td>{data}</td>
             <td>N/A</td>
             <td>N/A</td>
             <td>N/A</td>
