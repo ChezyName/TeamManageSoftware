@@ -19,13 +19,13 @@ function CreateNew({onClickFunc}:CreateNewProps) {
   return (
     <div className="root" style={{display: 'flex', position: 'fixed', backgroundColor: 'rgba(25,25,25,0.95)'}}>
       <div style={{width: '80%', height: '48px', marginLeft: '10%', marginTop: '5%', display: 'flex'}}>
-      <Button style={{flex: '1', borderRadius: '15px'}} onClick={() => {
+      <Button style={{flex: '1', borderRadius: '15px', marginRight: '5px'}} onClick={() => {
           onClickFunc("");
         }}><FontAwesomeIcon icon={faX}/></Button>
         
         <input type="string" value={Name} onChange={(e) => {setName(e.target.value)}} placeholder="ENTER NAME" style={{width: '90%', height: '100%', borderRadius: '15px'}}/>
         
-        <Button style={{flex: '1', borderRadius: '15px'}} onClick={() => {
+        <Button style={{flex: '1', borderRadius: '15px', marginLeft: '5px'}} onClick={() => {
           onClickFunc(Name);
         }}><FontAwesomeIcon icon={faAdd}/></Button>
       </div>

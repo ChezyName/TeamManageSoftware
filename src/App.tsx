@@ -15,8 +15,9 @@ import { faRotateLeft, faAdd, faPencil } from "@fortawesome/free-solid-svg-icons
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles.css'
+import Edit from "./Edit";
 
-interface DataType {
+export interface DataType {
   name: string;
   ids: string[];
   works: boolean[];
@@ -25,6 +26,9 @@ interface DataType {
 function App() {
   const [isCreate, setCreate] = useState(false);
   const [data,setData] = useState<DataType[]>([]);
+
+  const [Index,setIndex] = useState(0)
+  const [isEdit,setEdit] = useState(false)
 
   const saveFileLoc = "save.json";
 
@@ -71,6 +75,11 @@ function App() {
         Save();
         setCreate(false);
       }}/> : ""}
+      {
+        isEdit ? <Edit DefaultData={data[Index]} Index={Index} onEdit={(value:DataType,index:number) => {
+
+        }} onClose={() => {setEdit(false)}}/> : ""
+      }
       <div className="TopBar" style={{width: '100%', height: '42px',display: 'flex' , backgroundColor: 'var(--foreground)', borderBottom: '0px solid var(--border)'}}>
         <Button variant="danger"><FontAwesomeIcon icon={faRotateLeft}/> RESET</Button>
         <span style={{margin: 'auto',flex: '1', width: '60%', textAlign: 'center', color: 'white', fontSize: '1.25rem', fontWeight: "bold",userSelect: 'none'}}>Team Manage Software</span>
@@ -96,6 +105,7 @@ function App() {
               let name = dta.name;
               let singles:any = [];
               let percent_works = 0;
+              let index = data.indexOf(dta);
               for(var i = 0; i < 10; i++){
                 let id = dta.ids[i];
                 let works = dta.works[i];
@@ -113,7 +123,9 @@ function App() {
                 <th>{percent_works}%</th>
                 <th>{percent_works}%</th>
                 <button onClick={() => {
-                  console.log("On Clicked:");
+                  //console.log("On Clicked " + index);
+                  setEdit(true);
+                  setIndex(index);
                 }} className="editButton" style={{border: '0',width: '100%'}}><FontAwesomeIcon style={{color: 'white !important'}} icon={faPencil}/></button>
               </tr>
             })
