@@ -23,3 +23,7 @@ html, body, .root, #root {
   margin: 0;
   background-color: var(--background);
 }
+
+.editButton:hover {
+  background-color: darkblue;
+}
