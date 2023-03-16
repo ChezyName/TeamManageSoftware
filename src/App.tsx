@@ -58,6 +58,7 @@ function App() {
 
   return (
     <div className="root">
+      {/**<AreYouSure/>*/}
       {isCreate ? <CreateNew onClickFunc={(value:string) => {
         console.log("Creating {"+value+"}");
         if(value != "") {
@@ -77,11 +78,18 @@ function App() {
       }}/> : ""}
       {
         isEdit ? <Edit DefaultData={data[Index]} Index={Index} onEdit={(value:DataType,index:number) => {
-
+          let cData = data;
+          cData[index] = value;
+          setData(cData);
+          Save();
+          setEdit(false);
         }} onClose={() => {setEdit(false)}}/> : ""
       }
       <div className="TopBar" style={{width: '100%', height: '42px',display: 'flex' , backgroundColor: 'var(--foreground)', borderBottom: '0px solid var(--border)'}}>
-        <Button variant="danger"><FontAwesomeIcon icon={faRotateLeft}/> RESET</Button>
+        <Button variant="danger" onClick={() => {
+          writeTextFile(saveFileLoc,'',{ dir: BaseDirectory.AppData})
+          setData([]);
+        }}><FontAwesomeIcon icon={faRotateLeft}/> RESET</Button>
         <span style={{margin: 'auto',flex: '1', width: '60%', textAlign: 'center', color: 'white', fontSize: '1.25rem', fontWeight: "bold",userSelect: 'none'}}>Team Manage Software</span>
         <Button variant="primary" style={{marginLeft: 'auto'}} onClick={() => {
           //invoke('open_createnew')
@@ -115,13 +123,15 @@ function App() {
                   <th style={{color: works ? "green" : 'red'}}>{id == null ? "N/A" : id}</th>
                 )
               }
+              percent_works = Math.round((percent_works / 10) * 100)
+              const percent_failed = 100 - percent_works;
               return <tr>
                 <th>{name}</th>
                 {
                   singles
                 }
                 <th>{percent_works}%</th>
-                <th>{percent_works}%</th>
+                <th>{percent_failed}%</th>
                 <button onClick={() => {
                   //console.log("On Clicked " + index);
                   setEdit(true);
