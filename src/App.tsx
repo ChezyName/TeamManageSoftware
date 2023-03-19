@@ -1,9 +1,13 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { invoke } from "@tauri-apps/api/tauri";
 import { WebviewWindow } from '@tauri-apps/api/window'
 import { BaseDirectory,writeTextFile,exists, createDir, readTextFile} from '@tauri-apps/api/fs';
 import { appDataDir } from '@tauri-apps/api/path';
 import "./App.css";
+
+import { getCurrent } from '@tauri-apps/api/window';
+import jsPDF from 'jspdf';
+import size from 'window-size';
 
 //FONT AWESOME AND REACT BOOTSTRAP
 import Button from 'react-bootstrap/Button';
@@ -11,11 +15,12 @@ import Table from 'react-bootstrap/Table';
 import CreateNew from "./CreateNew";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faRotateLeft, faAdd, faPencil } from "@fortawesome/free-solid-svg-icons";
+import { faRotateLeft, faAdd, faPencil, faDownload } from "@fortawesome/free-solid-svg-icons";
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles.css'
 import Edit from "./Edit";
+import html2canvas from "html2canvas";
 
 export interface DataType {
   name: string;
@@ -29,6 +34,8 @@ function App() {
 
   const [Index,setIndex] = useState(0)
   const [isEdit,setEdit] = useState(false)
+
+  const downloadable = useRef(null);
 
   const saveFileLoc = "save.json";
 
@@ -95,9 +102,36 @@ function App() {
           //invoke('open_createnew')
           setCreate(true);
         }}>CREATE NEW <FontAwesomeIcon icon={faAdd}/> </Button>
+        <Button variant="primary" style={{marginLeft: '5px'}} onClick={async () => {
+          if(downloadable != null){
+            const monitor = await getCurrent();
+            const w = (await monitor.innerSize()).width;
+            const h = (await monitor.innerSize()).height;
+
+            const element:any = downloadable.current;
+
+            const elementw = element.clientWidth;
+            const elementh = element.clientHeight;
+
+            const ScaleW = w / elementw;
+            const ScaleH = h / elementh;
+
+            const finalW = elementw * ScaleW;
+            const finalH = elementh * ScaleH;
+
+            const quality = 1 // Higher the better but larger file
+            html2canvas(downloadable.current || document.createElement('div'),
+                { scale: quality }
+            ).then(canvas => {
+                const pdf = new jsPDF('l', 'px', [elementw,elementh]);
+                pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, elementw, elementh);
+                pdf.save("");
+            });
+          }
+        }}><FontAwesomeIcon icon={faDownload}/> </Button>
       </div>
 
-      <Table striped bordered hover variant="dark">
+      <Table striped bordered hover variant="dark" ref={downloadable}>
         <thead>
           <tr>
             <th>Name</th>
