@@ -104,9 +104,21 @@ function App() {
         }}>CREATE NEW <FontAwesomeIcon icon={faAdd}/> </Button>
         <Button variant="primary" style={{marginLeft: '5px'}} onClick={async () => {
           if(downloadable != null){
-            const monitor = await getCurrent();
-            const w = (await monitor.innerSize()).width;
-            const h = (await monitor.innerSize()).height;
+            var w = Math.max(
+              document.documentElement["clientWidth"],
+              document.body["scrollWidth"],
+              document.documentElement["scrollWidth"],
+              document.body["offsetWidth"],
+              document.documentElement["offsetWidth"]
+            );
+
+            var h = Math.max(
+              document.documentElement["clientHeight"],
+              document.body["scrollHeight"],
+              document.documentElement["scrollHeight"],
+              document.body["offsetHeight"],
+              document.documentElement["offsetHeight"]
+            );
 
             const element:any = downloadable.current;
 
