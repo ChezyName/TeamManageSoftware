@@ -1,6 +1,4 @@
 import { useState } from "react";
-import { invoke } from "@tauri-apps/api/tauri";
-import { WebviewWindow } from '@tauri-apps/api/window'
 import "./App.css";
 
 import { Button, Col, Row } from 'react-bootstrap';

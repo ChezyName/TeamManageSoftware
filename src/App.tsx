@@ -1,11 +1,6 @@
 import { useState, useEffect, useRef } from "react";
-import { invoke } from "@tauri-apps/api/tauri";
-import { WebviewWindow } from '@tauri-apps/api/window'
-import { BaseDirectory,writeTextFile,exists, createDir, readTextFile} from '@tauri-apps/api/fs';
-import { appDataDir } from '@tauri-apps/api/path';
 import "./App.css";
 
-import { getCurrent } from '@tauri-apps/api/window';
 import jsPDF from 'jspdf';
 import size from 'window-size';
 
@@ -40,6 +35,7 @@ function App() {
   const saveFileLoc = "save.json";
 
   async function Create(){
+    /*
     let dir = await exists("",{ dir: BaseDirectory.AppData});
     if(!dir) await createDir("",{ dir: BaseDirectory.AppData})
 
@@ -52,10 +48,18 @@ function App() {
       let cdata = await readTextFile(saveFileLoc,{ dir: BaseDirectory.AppData});
       setData(JSON.parse(cdata));
     }
+    */
+
+    let cData:any = localStorage.getItem("data");
+    console.log(cData);
+    if(cData == "" || cData == null || cData == undefined){
+      setData([]);
+    }
+    else setData(JSON.parse(cData));
   }
 
   function Save(){
-    writeTextFile(saveFileLoc,JSON.stringify(data),{ dir: BaseDirectory.AppData})
+    localStorage.setItem('data',JSON.stringify(data));
   }
 
   useEffect(() => {
@@ -79,6 +83,7 @@ function App() {
           let newData = data;
           newData.push({name: value, ids: [], works: []});
           setData(newData);
+          Save();
         }
         Save();
         setCreate(false);
@@ -94,8 +99,9 @@ function App() {
       }
       <div className="TopBar" style={{width: '100%', height: '42px',display: 'flex' , backgroundColor: 'var(--foreground)', borderBottom: '0px solid var(--border)'}}>
         <Button variant="danger" onClick={() => {
-          writeTextFile(saveFileLoc,'',{ dir: BaseDirectory.AppData})
+          //writeTextFile(saveFileLoc,'',{ dir: BaseDirectory.AppData})
           setData([]);
+          Save();
         }}><FontAwesomeIcon icon={faRotateLeft}/> RESET</Button>
         <span style={{margin: 'auto',flex: '1', width: '60%', textAlign: 'center', color: 'white', fontSize: '1.25rem', fontWeight: "bold",userSelect: 'none'}}>Team Manage Software</span>
         <Button variant="primary" style={{marginLeft: 'auto'}} onClick={() => {
